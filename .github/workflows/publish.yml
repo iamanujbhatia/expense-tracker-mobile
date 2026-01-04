@@ -1,0 +1,114 @@
+name: Publish to App Stores
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to publish to'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - ios
+          - android
+          - all
+      auto_submit:
+        description: 'Auto-submit to app stores'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'pnpm'
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      
+      - name: Build and submit iOS
+        if: github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'all'
+        run: |
+          if [ "${{ github.event.inputs.auto_submit }}" = "true" ]; then
+            eas build --platform ios --auto-submit --non-interactive
+          else
+            eas build --platform ios --non-interactive
+          fi
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      
+      - name: Build and submit Android
+        if: github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all'
+        run: |
+          if [ "${{ github.event.inputs.auto_submit }}" = "true" ]; then
+            eas build --platform android --auto-submit --non-interactive
+          else
+            eas build --platform android --non-interactive
+          fi
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            Build triggered by: ${{ github.actor }}
+            Platform: ${{ github.event.inputs.platform }}
+            Auto-submit: ${{ github.event.inputs.auto_submit }}
+            
+            Build logs and artifacts available in Actions tab.
+          draft: false
+          prerelease: false
+      
+      - name: Notify Slack (Optional)
+        if: always()
+        uses: slackapi/slack-github-action@v1
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          payload: |
+            {
+              "text": "Expense Tracker Build ${{ job.status }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Expense Tracker Build ${{ job.status }}*\nPlatform: ${{ github.event.inputs.platform }}\nTriggered by: ${{ github.actor }}"
+                  }
+                }
+              ]
+            }
+        continue-on-error: true

@@ -1,0 +1,51 @@
+{
+  "cli": {
+    "version": ">= 5.0.0",
+    "promptToConfigurePushNotifications": false
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m1"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m1"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "ios": {
+        "resourceClass": "m1"
+      },
+      "android": {
+        "buildType": "aab"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "$APPLE_ID",
+        "appleIdPassword": "$APPLE_PASSWORD",
+        "teamId": "$APPLE_TEAM_ID",
+        "ascAppId": "YOUR_ASC_APP_ID"
+      },
+      "android": {
+        "serviceAccount": "$ANDROID_SERVICE_ACCOUNT_JSON",
+        "track": "internal",
+        "changesNotSentForReview": false
+      }
+    }
+  }
+}
