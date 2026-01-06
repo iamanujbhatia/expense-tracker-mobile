@@ -32,13 +32,41 @@ export interface MonthlyStats {
 }
 
 export interface AppSettings {
-  currency: string; // e.g., "USD", "EUR"
+  currency: string; // e.g., "AUD", "USD", "EUR"
   theme: "light" | "dark" | "auto";
   defaultTransactionType: TransactionType;
 }
 
 // Default categories
 export const DEFAULT_CATEGORIES: Category[] = [
+  {
+    id: "cat-education",
+    name: "Education",
+    color: "#06B6D4",
+    icon: "🎓",
+    type: "expense",
+  },
+  {
+    id: "cat-housing",
+    name: "Housing/Rent",
+    color: "#F97316",
+    icon: "🏠",
+    type: "expense",
+  },
+  {
+    id: "cat-car-maintenance",
+    name: "Car Maintenance",
+    color: "#EF4444",
+    icon: "🔧",
+    type: "expense",
+  },
+  {
+    id: "cat-travel",
+    name: "Travel",
+    color: "#14B8A6",
+    icon: "✈️",
+    type: "expense",
+  },
   {
     id: "cat-food",
     name: "Food",
@@ -104,7 +132,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
   },
   {
     id: "cat-investment",
-    name: "Investment",
+    name: "Investments",
     color: "#8B5CF6",
     icon: "📈",
     type: "income",

@@ -46,13 +46,32 @@ Before you begin, ensure you have the following installed on your machine:
 
 ### Step 1: Clone the Repository
 
-```bash
-# Clone your repository
-git clone https://github.com/YOUR_USERNAME/expense-tracker-mobile.git
-cd expense-tracker-mobile
-```
+         ### Anuj Notes - Since I already downloaded the files in the folder expense-tracker-mobile I did this instead:
 
-### Step 2: Install Node.js and pnpm
+         ### # Navigate to your existing project
+         cd C:\MyProjects\expense-tracker-mobile
+
+         # Initialize git repository
+         git init
+
+         # Add all files
+         git add .
+
+         # Create initial commit
+         git commit -m "Initial commit: Expense Tracker mobile app"
+
+         # Add your GitHub repository as remote
+         git remote add origin https://github.com/iamanujbhatia/expense-tracker-mobile.git
+
+         # created repo named expense-tracker-mobile on github
+
+         # Set main as default branch
+         git branch -M main
+
+         # Push to GitHub
+         git push -u origin main
+
+### Step 2: Install Node.js and pnpm  (if not already installed)
 
 **macOS (using Homebrew):**
 ```bash
